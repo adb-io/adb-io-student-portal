@@ -3,20 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADB-IO Student Portal - AI-Powered Learning Dashboard</title>
-    <meta name="description" content="Personalized learning experience powered by 4 AI agents">
-    
-    <!-- PWA Meta Tags -->
+    <title>ADB-IO Student Portal - AI Dashboard</title>
+    <meta name="description" content="AI-powered learning dashboard">
     <meta name="theme-color" content="#2563eb">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="ADB-IO Student">
-    
-    <!-- Icons -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
     
-    <!-- All styles embedded to avoid 404 errors -->
     <style>
         :root {
             --primary: #2563eb; --secondary: #10b981; --green: #059669; --green-light: #d1fae5; --green-dark: #047857;
@@ -28,11 +19,8 @@
             --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --transition: all 0.15s ease-in-out;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { font-family: var(--font-family); background-color: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
-
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -46,7 +34,6 @@
             animation: spin 1s linear infinite; margin-bottom: var(--spacing-4);
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .adb-btn {
             display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-2);
             font-family: var(--font-family); font-weight: 500; text-decoration: none;
@@ -58,14 +45,12 @@
         .adb-btn--primary:hover { background-color: #1d4ed8; text-decoration: none; color: var(--white); }
         .adb-btn--secondary { background-color: var(--gray-100); border-color: var(--gray-200); color: var(--gray-700); }
         .adb-btn--secondary:hover { background-color: var(--gray-200); text-decoration: none; color: var(--gray-700); }
-
         .adb-green-badge {
             display: inline-flex; align-items: center; gap: 0.25rem; background-color: var(--green-light);
             color: var(--green-dark); padding: 0.25rem 0.5rem; border-radius: var(--radius);
             font-size: 0.75rem; font-weight: 500;
         }
         .adb-green-badge::before { content: '🌿'; font-size: 0.875em; }
-
         .navbar {
             background: var(--white); border-bottom: 1px solid var(--gray-200);
             padding: var(--spacing-4) 0; position: sticky; top: 0; z-index: 100;
@@ -85,14 +70,12 @@
         }
         .nav-link:hover, .nav-link.active { color: var(--primary); background-color: var(--gray-50); }
         .nav-actions { display: flex; align-items: center; gap: var(--spacing-4); }
-
         .main-content { max-width: 1200px; margin: 0 auto; padding: var(--spacing-8) var(--spacing-6); }
         .page { display: none; }
         .page.active { display: block; }
         .page-header { margin-bottom: var(--spacing-8); }
         .page-title { font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: var(--spacing-2); }
         .page-subtitle { font-size: 1.125rem; color: var(--gray-600); }
-
         .section-title { font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-6); }
         .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); }
         .agent-card {
@@ -117,7 +100,6 @@
         .metric { text-align: center; }
         .metric-value { display: block; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
         .metric-label { font-size: 0.75rem; color: var(--gray-600); }
-
         .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4); }
         .action-card {
             background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
@@ -128,11 +110,9 @@
         .action-icon { font-size: 2rem; margin-bottom: var(--spacing-3); }
         .action-title { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-2); }
         .action-description { font-size: 0.875rem; color: var(--gray-600); }
-
         .coming-soon { text-align: center; padding: var(--spacing-8); color: var(--gray-600); }
         .coming-soon-icon { font-size: 3rem; margin-bottom: var(--spacing-4); }
         .coming-soon h3 { font-size: 1.5rem; margin-bottom: var(--spacing-2); color: var(--gray-700); }
-
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .nav-container { padding: 0 var(--spacing-4); }
@@ -159,14 +139,14 @@
         <header class="navbar">
             <div class="nav-container">
                 <div class="nav-brand">
-                    <div class="nav-logo">🎓</div>
+                    <div class="nav-logo">��</div>
                     <span class="brand-text">ADB-IO Student</span>
                     <span class="adb-green-badge">AI Powered</span>
                 </div>
                 
                 <nav class="nav-menu">
                     <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                        <span>��</span> Dashboard
+                        <span>🏠</span> Dashboard
                     </a>
                     <a href="#courses" class="nav-link" data-page="courses">
                         <span>📚</span> Courses
