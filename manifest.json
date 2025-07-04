@@ -12,51 +12,9 @@
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "assets/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-192.png",
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMyNTYzZWIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+CjxwYXRoIGQ9Ik0xMiAzTDEgOUwxMiAxNUwyMyA5TDEyIDNaTTUgMTMuMThMMTIgMTcuMThMMTkgMTMuMThMMTcuNzEgMTIuNjhMMTIgMTUuMTlMNi4yOSAxMi42OEw1IDEzLjE4WiIvPgo8L3N2Zz4KPC9zdmc+",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ],
@@ -65,22 +23,19 @@
       "name": "Dashboard",
       "short_name": "Dashboard",
       "description": "View your learning dashboard",
-      "url": "/#dashboard",
-      "icons": [{ "src": "assets/icon-96.png", "sizes": "96x96" }]
+      "url": "/#dashboard"
     },
     {
       "name": "Courses",
       "short_name": "Courses",
       "description": "Browse available courses",
-      "url": "/#courses",
-      "icons": [{ "src": "assets/icon-96.png", "sizes": "96x96" }]
+      "url": "/#courses"
     },
     {
       "name": "AI Agents",
       "short_name": "AI Agents",
       "description": "Manage your AI learning assistants",
-      "url": "/#ai-agents",
-      "icons": [{ "src": "assets/icon-96.png", "sizes": "96x96" }]
+      "url": "/#ai-agents"
     }
   ],
   "screenshots": [

@@ -4,29 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADB-IO Student Portal - AI-Powered Learning Dashboard</title>
-    <meta name="description" content="Personalized learning experience powered by 4 AI agents: Content Curator, Assessment Generator, Learning Analytics, and Green Computing">
+    <meta name="description" content="Personalized learning experience powered by 4 AI agents">
     
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#2563eb">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ADB-IO Student">
     
     <!-- Icons -->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
     <link rel="manifest" href="manifest.json">
     
     <!-- Styles -->
     <link rel="stylesheet" href="https://adb-io.github.io/adb-io-shared-components/css/components.css">
     <link rel="stylesheet" href="css/dashboard.css">
     
-    <!-- Embedded Critical CSS for immediate loading -->
     <style>
-        /* Critical CSS for immediate rendering */
         :root {
             --primary: #2563eb;
-            --primary-hover: #1d4ed8;
             --secondary: #10b981;
             --green: #059669;
             --green-light: #d1fae5;
@@ -40,7 +37,6 @@
             --gray-800: #1f2937;
             --gray-900: #111827;
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --spacing-1: 0.25rem;
             --spacing-2: 0.5rem;
             --spacing-3: 0.75rem;
             --spacing-4: 1rem;
@@ -49,17 +45,13 @@
             --radius: 0.375rem;
             --radius-lg: 0.5rem;
             --radius-xl: 0.75rem;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --transition: all 0.15s ease-in-out;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: var(--font-family);
             background-color: var(--gray-50);
@@ -68,481 +60,130 @@
         }
 
         .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            color: white;
-            transition: opacity 0.5s ease-out;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; color: white; transition: opacity 0.5s ease-out;
         }
-
-        .loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
+        .loading-screen.hidden { opacity: 0; pointer-events: none; }
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: var(--spacing-4);
+            width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: var(--spacing-4);
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 1.125rem;
-            font-weight: 500;
-            margin-bottom: var(--spacing-2);
-        }
-
-        .loading-subtext {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
-        /* Button Components - Fallback */
         .adb-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-2);
-            font-family: var(--font-family);
-            font-weight: 500;
-            text-decoration: none;
-            border: 1px solid transparent;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            user-select: none;
-            white-space: nowrap;
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: var(--spacing-2); font-family: var(--font-family); font-weight: 500;
+            text-decoration: none; border: 1px solid transparent; border-radius: var(--radius);
+            cursor: pointer; transition: var(--transition); user-select: none; white-space: nowrap;
         }
-
-        .adb-btn--small {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            min-height: 2rem;
-        }
-
-        .adb-btn--medium {
-            padding: var(--spacing-2) var(--spacing-4);
-            font-size: 1rem;
-            min-height: 2.5rem;
-        }
-
-        .adb-btn--primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            color: var(--white);
-        }
-
-        .adb-btn--primary:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-            border-color: var(--primary-hover);
-            text-decoration: none;
-            color: var(--white);
-        }
-
-        .adb-btn--secondary {
-            background-color: var(--gray-100);
-            border-color: var(--gray-200);
-            color: var(--gray-700);
-        }
-
-        .adb-btn--secondary:hover:not(:disabled) {
-            background-color: var(--gray-200);
-            text-decoration: none;
-            color: var(--gray-700);
-        }
+        .adb-btn--small { padding: 0.25rem 0.75rem; font-size: 0.875rem; min-height: 2rem; }
+        .adb-btn--primary { background-color: var(--primary); border-color: var(--primary); color: var(--white); }
+        .adb-btn--primary:hover { background-color: #1d4ed8; text-decoration: none; color: var(--white); }
+        .adb-btn--secondary { background-color: var(--gray-100); border-color: var(--gray-200); color: var(--gray-700); }
+        .adb-btn--secondary:hover { background-color: var(--gray-200); text-decoration: none; color: var(--gray-700); }
 
         .adb-green-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background-color: var(--green-light);
-            color: var(--green-dark);
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius);
-            font-size: 0.75rem;
-            font-weight: 500;
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            background-color: var(--green-light); color: var(--green-dark);
+            padding: 0.25rem 0.5rem; border-radius: var(--radius);
+            font-size: 0.75rem; font-weight: 500;
         }
+        .adb-green-badge::before { content: '🌿'; font-size: 0.875em; }
 
-        .adb-green-badge::before {
-            content: '🌿';
-            font-size: 0.875em;
-        }
-
-        /* Navigation */
         .navbar {
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            padding: var(--spacing-4) 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background: var(--white); border-bottom: 1px solid var(--gray-200);
+            padding: var(--spacing-4) 0; position: sticky; top: 0; z-index: 100;
         }
-
         .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 var(--spacing-6);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing-6);
+            display: flex; align-items: center; justify-content: space-between;
         }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-3);
-        }
-
-        .nav-logo {
-            font-size: 2rem;
-        }
-
-        .brand-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--gray-900);
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: var(--spacing-6);
-        }
-
+        .nav-brand { display: flex; align-items: center; gap: var(--spacing-3); }
+        .nav-logo { font-size: 2rem; }
+        .brand-text { font-size: 1.25rem; font-weight: 700; color: var(--gray-900); }
+        .nav-menu { display: flex; gap: var(--spacing-6); }
         .nav-link {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-2);
-            text-decoration: none;
-            color: var(--gray-600);
-            font-weight: 500;
-            padding: var(--spacing-2) var(--spacing-3);
-            border-radius: var(--radius);
+            display: flex; align-items: center; gap: var(--spacing-2);
+            text-decoration: none; color: var(--gray-600); font-weight: 500;
+            padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius);
             transition: var(--transition);
         }
+        .nav-link:hover, .nav-link.active { color: var(--primary); background-color: var(--gray-50); }
+        .nav-actions { display: flex; align-items: center; gap: var(--spacing-4); }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--primary);
-            background-color: var(--gray-50);
-        }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: var(--spacing-8) var(--spacing-6); }
+        .page { display: none; }
+        .page.active { display: block; }
+        .page-header { margin-bottom: var(--spacing-8); }
+        .page-title { font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: var(--spacing-2); }
+        .page-subtitle { font-size: 1.125rem; color: var(--gray-600); }
 
-        .nav-icon {
-            font-size: 1rem;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-4);
-        }
-
-        .user-menu {
-            position: relative;
-        }
-
-        .user-avatar {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-2);
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: var(--spacing-2);
-            border-radius: var(--radius);
-            transition: var(--transition);
-        }
-
-        .user-avatar:hover {
-            background-color: var(--gray-50);
-        }
-
-        .avatar-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--gray-200);
-        }
-
-        .user-name {
-            font-weight: 500;
-            color: var(--gray-700);
-        }
-
-        .dropdown-arrow {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-8) var(--spacing-6);
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .page-header {
-            margin-bottom: var(--spacing-8);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: var(--spacing-2);
-        }
-
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--gray-600);
-        }
-
-        /* AI Agents Status */
-        .ai-agents-status {
-            margin-bottom: var(--spacing-8);
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: var(--spacing-6);
-        }
-
-        .agents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-6);
-        }
-
+        .section-title { font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-6); }
+        .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); }
         .agent-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-6);
-            transition: var(--transition);
+            background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
+            padding: var(--spacing-6); transition: var(--transition);
         }
-
-        .agent-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-
-        .agent-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-4);
-            margin-bottom: var(--spacing-4);
-        }
-
+        .agent-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .agent-header { display: flex; align-items: center; gap: var(--spacing-4); margin-bottom: var(--spacing-4); }
         .agent-icon {
-            font-size: 2rem;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--green-light);
-            border-radius: var(--radius-lg);
+            font-size: 2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            background: var(--green-light); border-radius: var(--radius-lg);
         }
-
-        .agent-info {
-            flex: 1;
-        }
-
-        .agent-name {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: var(--spacing-1);
-        }
-
+        .agent-info { flex: 1; }
+        .agent-name { font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.25rem; }
         .agent-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background: var(--green);
-            color: var(--white);
-            padding: 0.125rem 0.5rem;
-            border-radius: var(--radius);
-            font-size: 0.75rem;
-            font-weight: 500;
+            display: inline-flex; align-items: center; gap: 0.25rem; background: var(--green); color: var(--white);
+            padding: 0.125rem 0.5rem; border-radius: var(--radius); font-size: 0.75rem; font-weight: 500;
         }
+        .agent-status.active::before { content: '●'; color: var(--white); }
+        .agent-description { color: var(--gray-600); margin-bottom: var(--spacing-4); line-height: 1.5; }
+        .agent-metrics { display: flex; gap: var(--spacing-4); }
+        .metric { text-align: center; }
+        .metric-value { display: block; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
+        .metric-label { font-size: 0.75rem; color: var(--gray-600); }
 
-        .agent-status.active::before {
-            content: '●';
-            color: var(--white);
-        }
-
-        .agent-description {
-            color: var(--gray-600);
-            margin-bottom: var(--spacing-4);
-            line-height: 1.5;
-        }
-
-        .agent-metrics {
-            display: flex;
-            gap: var(--spacing-4);
-        }
-
-        .metric {
-            text-align: center;
-        }
-
-        .metric-value {
-            display: block;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .metric-label {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            margin-bottom: var(--spacing-8);
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-4);
-        }
-
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4); }
         .action-card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-xl);
-            padding: var(--spacing-6);
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            font-family: inherit;
+            background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
+            padding: var(--spacing-6); text-align: center; cursor: pointer; transition: var(--transition);
+            border: none; font-family: inherit;
         }
+        .action-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .action-icon { font-size: 2rem; margin-bottom: var(--spacing-3); }
+        .action-title { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-2); }
+        .action-description { font-size: 0.875rem; color: var(--gray-600); }
 
-        .action-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-            border-color: var(--primary);
-        }
+        .coming-soon { text-align: center; padding: var(--spacing-8); color: var(--gray-600); }
+        .coming-soon-icon { font-size: 3rem; margin-bottom: var(--spacing-4); }
+        .coming-soon h3 { font-size: 1.5rem; margin-bottom: var(--spacing-2); color: var(--gray-700); }
 
-        .action-icon {
-            font-size: 2rem;
-            margin-bottom: var(--spacing-3);
-        }
-
-        .action-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: var(--spacing-2);
-        }
-
-        .action-description {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-
-        /* Coming Soon */
-        .coming-soon {
-            text-align: center;
-            padding: var(--spacing-8);
-            color: var(--gray-600);
-        }
-
-        .coming-soon-icon {
-            font-size: 3rem;
-            margin-bottom: var(--spacing-4);
-        }
-
-        .coming-soon h3 {
-            font-size: 1.5rem;
-            margin-bottom: var(--spacing-2);
-            color: var(--gray-700);
-        }
-
-        /* Responsive Design */
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
-            
-            .nav-container {
-                padding: 0 var(--spacing-4);
-            }
-            
-            .main-content {
-                padding: var(--spacing-6) var(--spacing-4);
-            }
-            
-            .page-title {
-                font-size: 1.5rem;
-            }
-            
-            .agents-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .nav-menu { display: none; }
+            .nav-container { padding: 0 var(--spacing-4); }
+            .main-content { padding: var(--spacing-6) var(--spacing-4); }
+            .page-title { font-size: 1.5rem; }
+            .agents-grid { grid-template-columns: 1fr; }
+            .actions-grid { grid-template-columns: repeat(2, 1fr); }
         }
-
         @media (max-width: 480px) {
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .agent-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .agent-metrics {
-                justify-content: center;
-            }
+            .actions-grid { grid-template-columns: 1fr; }
+            .agent-header { flex-direction: column; text-align: center; }
+            .agent-metrics { justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-screen">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Initializing AI Agents</div>
-        <div class="loading-subtext">Preparing your personalized learning experience...</div>
+        <div style="font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem;">Initializing AI Agents</div>
+        <div style="font-size: 0.875rem; opacity: 0.8;">Preparing your personalized learning experience...</div>
     </div>
 
-    <!-- Main Application -->
     <div class="app" id="app" style="display: none;">
-        <!-- Navigation Header -->
         <header class="navbar">
             <div class="nav-container">
                 <div class="nav-brand">
@@ -553,70 +194,50 @@
                 
                 <nav class="nav-menu">
                     <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                        <span class="nav-icon">🏠</span>
-                        Dashboard
+                        <span>🏠</span> Dashboard
                     </a>
                     <a href="#courses" class="nav-link" data-page="courses">
-                        <span class="nav-icon">📚</span>
-                        Courses
+                        <span>📚</span> Courses
                     </a>
                     <a href="#assignments" class="nav-link" data-page="assignments">
-                        <span class="nav-icon">📝</span>
-                        Assignments
+                        <span>📝</span> Assignments
                     </a>
                     <a href="#analytics" class="nav-link" data-page="analytics">
-                        <span class="nav-icon">📊</span>
-                        Analytics
+                        <span>📊</span> Analytics
                     </a>
                     <a href="#ai-agents" class="nav-link" data-page="ai-agents">
-                        <span class="nav-icon">🤖</span>
-                        AI Agents
+                        <span>🤖</span> AI Agents
                     </a>
                 </nav>
                 
                 <div class="nav-actions">
                     <button class="adb-btn adb-btn--secondary adb-btn--small" id="green-metrics-btn">
-                        <span>🌱</span>
-                        Green Mode
+                        <span>🌱</span> Green Mode
                     </button>
-                    <div class="user-menu">
-                        <button class="user-avatar" id="user-menu-btn">
-                            <div class="avatar-img"></div>
-                            <span class="user-name">Student</span>
-                            <span class="dropdown-arrow">▼</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content Area -->
         <main class="main-content">
-            <!-- Dashboard Page -->
             <div class="page active" id="dashboard-page">
                 <div class="page-header">
                     <h1 class="page-title">Welcome back, Student! 👋</h1>
                     <p class="page-subtitle">Your AI-powered learning dashboard is ready</p>
                 </div>
 
-                <!-- AI Agents Status -->
-                <section class="ai-agents-status">
+                <section style="margin-bottom: 2rem;">
                     <h2 class="section-title">AI Agents Status</h2>
                     <div class="agents-grid">
-                        <div class="agent-card" data-agent="content-curator">
+                        <div class="agent-card">
                             <div class="agent-header">
                                 <div class="agent-icon">🤖</div>
                                 <div class="agent-info">
                                     <h3 class="agent-name">Content Curator</h3>
                                     <span class="agent-status active">Active</span>
                                 </div>
-                                <div class="agent-actions">
-                                    <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                                </div>
+                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
                             </div>
-                            <p class="agent-description">
-                                Analyzing your learning patterns and recommending personalized content
-                            </p>
+                            <p class="agent-description">Analyzing your learning patterns and recommending personalized content</p>
                             <div class="agent-metrics">
                                 <div class="metric">
                                     <span class="metric-value">12</span>
@@ -629,20 +250,16 @@
                             </div>
                         </div>
 
-                        <div class="agent-card" data-agent="assessment-generator">
+                        <div class="agent-card">
                             <div class="agent-header">
                                 <div class="agent-icon">📝</div>
                                 <div class="agent-info">
                                     <h3 class="agent-name">Assessment Generator</h3>
                                     <span class="agent-status active">Active</span>
                                 </div>
-                                <div class="agent-actions">
-                                    <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                                </div>
+                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
                             </div>
-                            <p class="agent-description">
-                                Creating adaptive assessments based on your current knowledge level
-                            </p>
+                            <p class="agent-description">Creating adaptive assessments based on your current knowledge level</p>
                             <div class="agent-metrics">
                                 <div class="metric">
                                     <span class="metric-value">8</span>
@@ -655,20 +272,16 @@
                             </div>
                         </div>
 
-                        <div class="agent-card" data-agent="learning-analytics">
+                        <div class="agent-card">
                             <div class="agent-header">
                                 <div class="agent-icon">📊</div>
                                 <div class="agent-info">
                                     <h3 class="agent-name">Learning Analytics</h3>
                                     <span class="agent-status active">Active</span>
                                 </div>
-                                <div class="agent-actions">
-                                    <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                                </div>
+                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
                             </div>
-                            <p class="agent-description">
-                                Tracking your progress and identifying areas for improvement
-                            </p>
+                            <p class="agent-description">Tracking your progress and identifying areas for improvement</p>
                             <div class="agent-metrics">
                                 <div class="metric">
                                     <span class="metric-value">78%</span>
@@ -681,20 +294,16 @@
                             </div>
                         </div>
 
-                        <div class="agent-card" data-agent="green-computing">
+                        <div class="agent-card">
                             <div class="agent-header">
                                 <div class="agent-icon">🌿</div>
                                 <div class="agent-info">
                                     <h3 class="agent-name">Green Computing</h3>
                                     <span class="agent-status active">Active</span>
                                 </div>
-                                <div class="agent-actions">
-                                    <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                                </div>
+                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
                             </div>
-                            <p class="agent-description">
-                                Optimizing your learning experience for minimal environmental impact
-                            </p>
+                            <p class="agent-description">Optimizing your learning experience for minimal environmental impact</p>
                             <div class="agent-metrics">
                                 <div class="metric">
                                     <span class="metric-value">0.2kg</span>
@@ -709,8 +318,7 @@
                     </div>
                 </section>
 
-                <!-- Quick Actions -->
-                <section class="quick-actions">
+                <section>
                     <h2 class="section-title">Quick Actions</h2>
                     <div class="actions-grid">
                         <button class="action-card" data-action="continue-learning">
@@ -718,19 +326,16 @@
                             <h3 class="action-title">Continue Learning</h3>
                             <p class="action-description">Resume your last course</p>
                         </button>
-                        
                         <button class="action-card" data-action="take-quiz">
                             <div class="action-icon">🧠</div>
                             <h3 class="action-title">Take Quiz</h3>
                             <p class="action-description">Test your knowledge</p>
                         </button>
-                        
                         <button class="action-card" data-action="view-recommendations">
                             <div class="action-icon">💡</div>
                             <h3 class="action-title">AI Recommendations</h3>
                             <p class="action-description">Personalized content</p>
                         </button>
-                        
                         <button class="action-card" data-action="check-progress">
                             <div class="action-icon">📈</div>
                             <h3 class="action-title">Check Progress</h3>
@@ -740,7 +345,6 @@
                 </section>
             </div>
 
-            <!-- Other pages will be loaded dynamically -->
             <div class="page" id="courses-page">
                 <div class="page-header">
                     <h1 class="page-title">My Courses</h1>
@@ -791,41 +395,28 @@
         </main>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Simple app initialization
         document.addEventListener('DOMContentLoaded', function() {
-            // Hide loading screen after 2 seconds
             setTimeout(() => {
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('app').style.display = 'block';
             }, 2000);
 
-            // Navigation functionality
             const navLinks = document.querySelectorAll('.nav-link');
             const pages = document.querySelectorAll('.page');
 
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
-                    // Remove active class from all links and pages
                     navLinks.forEach(l => l.classList.remove('active'));
                     pages.forEach(p => p.classList.remove('active'));
-                    
-                    // Add active class to clicked link
                     link.classList.add('active');
-                    
-                    // Show corresponding page
                     const pageId = link.getAttribute('data-page') + '-page';
                     const targetPage = document.getElementById(pageId);
-                    if (targetPage) {
-                        targetPage.classList.add('active');
-                    }
+                    if (targetPage) targetPage.classList.add('active');
                 });
             });
 
-            // Quick action handlers
             document.querySelectorAll('.action-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const action = card.getAttribute('data-action');
@@ -833,16 +424,14 @@
                 });
             });
 
-            // Green metrics button
             document.getElementById('green-metrics-btn').addEventListener('click', () => {
                 alert('🌿 Green Computing Metrics:\n\n• Energy Usage: 75% less than traditional LMS\n• Carbon Footprint: 0.2kg CO₂ today\n• Renewable Energy: 100% powered\n• Battery Optimization: Active\n\nYou\'re making a positive environmental impact!');
             });
         });
 
-        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('service-worker.js')
                     .then(registration => console.log('SW registered'))
                     .catch(error => console.log('SW registration failed'));
             });
