@@ -509,5 +509,3 @@ export default class AIAssistant {
         // Clean up event listeners and resources
     }
 }
-
-export default AIAssistant;

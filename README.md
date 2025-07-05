@@ -2,6 +2,18 @@
 
 A modern, green computing-focused student portal for the ADB-IO Learning Management System with professional sidebar navigation design.
 
+## 🚀 Live Demo
+
+**Production URL:** [https://adb-io.github.io/adb-io-student-portal/](https://adb-io.github.io/adb-io-student-portal/)
+
+## 📱 Self-Contained Architecture
+
+This application is **completely self-contained** and optimized for GitHub Pages deployment:
+- ✅ **No External Dependencies** - All CSS and JS components are local
+- ✅ **GitHub Pages Compatible** - No CORS issues or server-side requirements
+- ✅ **Offline Support** - Service Worker for offline functionality
+- ✅ **Green Computing** - Optimized for minimal resource usage
+
 ## Overview
 
 The ADB-IO Student Portal is a comprehensive learning management interface designed with green computing principles and modern LMS aesthetics. It features a professional dark sidebar navigation, comprehensive dashboard, and modular architecture for optimal performance and user experience.

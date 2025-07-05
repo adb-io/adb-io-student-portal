@@ -504,5 +504,3 @@ export default class Progress {
         // Clean up event listeners and resources
     }
 }
-
-export default Progress;

@@ -12,8 +12,8 @@ import Progress from './js/modules/progress.js';
 import CourseProgress from './js/modules/course-progress.js';
 import AIAssistant from './js/modules/ai-assistant.js';
 
-// Import shared components
-import { Modal, showAlert } from 'https://adb-io.github.io/adb-io-shared-components/js/components/modal.js';
+// Import local components (no longer shared)
+import { Modal, showAlert } from './js/components/modal.js';
 
 class StudentPortalApp {
     constructor() {

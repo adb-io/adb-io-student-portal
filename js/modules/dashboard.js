@@ -368,5 +368,3 @@ export default class Dashboard {
         // Clean up event listeners and resources
     }
 }
-
-export default Dashboard;
