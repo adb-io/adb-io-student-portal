@@ -181,8 +181,8 @@ class StudentPortalApp {
             sidebar.classList.remove('sidebar--open');
         }
 
-        // Save current section to storage
-        this.storageManager.setPreference('currentSection', section);
+        // Save current section to storage (mock mode)
+        localStorage.setItem('adb_current_section', section);
 
         // Track page view for analytics
         this.trackPageView(section);
@@ -273,12 +273,12 @@ class StudentPortalApp {
             const loadTime = navigation.loadEventEnd - navigation.loadEventStart;
             console.log(`📊 Page Load Time: ${loadTime}ms`);
 
-            // Store metrics for analysis
-            this.storageManager.setCache('performance_metrics', {
+            // Store metrics for analysis (mock mode)
+            localStorage.setItem('adb_performance_metrics', JSON.stringify({
                 loadTime,
                 timestamp: Date.now(),
                 section: this.currentSection
-            }, 3600);
+            }));
         }
 
         // Track resource usage
@@ -308,17 +308,17 @@ class StudentPortalApp {
             sessionId: this.getSessionId()
         };
 
-        // Store locally for later sync
-        const pageViews = this.storageManager.getCache('page_views', []);
+        // Store locally for later sync (mock mode)
+        const pageViews = JSON.parse(localStorage.getItem('adb_page_views') || '[]');
         pageViews.push(pageView);
-        this.storageManager.setCache('page_views', pageViews, 86400); // 24 hours
+        localStorage.setItem('adb_page_views', JSON.stringify(pageViews));
     }
 
     getSessionId() {
-        let sessionId = this.storageManager.getSession('session_id');
+        let sessionId = sessionStorage.getItem('adb_session_id');
         if (!sessionId) {
             sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            this.storageManager.setSession('session_id', sessionId);
+            sessionStorage.setItem('adb_session_id', sessionId);
         }
         return sessionId;
     }
@@ -380,9 +380,9 @@ class StudentPortalApp {
             currentUser: this.currentUser,
             currentSection: this.currentSection,
             modules: Object.keys(this.modules),
-            storageUsage: this.storageManager.getStorageUsage(),
-            isAuthenticated: this.authManager.isAuthenticated(),
-            apiBaseURL: this.apiClient.baseURL
+            storageUsage: 'Mock mode - no storage manager',
+            isAuthenticated: 'Mock mode - always authenticated',
+            apiBaseURL: 'Mock mode - no API client'
         };
     }
 }
