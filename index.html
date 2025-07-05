@@ -3,383 +3,447 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADB-IO Student Portal - AI Dashboard</title>
-    <meta name="description" content="AI-powered learning dashboard">
-    <meta name="theme-color" content="#2563eb">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <title>Student Portal - ADB-IO Green LMS</title>
     
-    <style>
-        :root {
-            --primary: #2563eb; --secondary: #10b981; --green: #059669; --green-light: #d1fae5; --green-dark: #047857;
-            --white: #ffffff; --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-600: #4b5563;
-            --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --spacing-2: 0.5rem; --spacing-3: 0.75rem; --spacing-4: 1rem; --spacing-6: 1.5rem; --spacing-8: 2rem;
-            --radius: 0.375rem; --radius-lg: 0.5rem; --radius-xl: 0.75rem;
-            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --transition: all 0.15s ease-in-out;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: var(--font-family); background-color: var(--gray-50); color: var(--gray-800); line-height: 1.6; }
-        .loading-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; color: white; transition: opacity 0.5s ease-out;
-        }
-        .loading-screen.hidden { opacity: 0; pointer-events: none; }
-        .loading-spinner {
-            width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white; border-radius: 50%;
-            animation: spin 1s linear infinite; margin-bottom: var(--spacing-4);
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .adb-btn {
-            display: inline-flex; align-items: center; justify-content: center; gap: var(--spacing-2);
-            font-family: var(--font-family); font-weight: 500; text-decoration: none;
-            border: 1px solid transparent; border-radius: var(--radius); cursor: pointer;
-            transition: var(--transition); user-select: none; white-space: nowrap;
-        }
-        .adb-btn--small { padding: 0.25rem 0.75rem; font-size: 0.875rem; min-height: 2rem; }
-        .adb-btn--primary { background-color: var(--primary); border-color: var(--primary); color: var(--white); }
-        .adb-btn--primary:hover { background-color: #1d4ed8; text-decoration: none; color: var(--white); }
-        .adb-btn--secondary { background-color: var(--gray-100); border-color: var(--gray-200); color: var(--gray-700); }
-        .adb-btn--secondary:hover { background-color: var(--gray-200); text-decoration: none; color: var(--gray-700); }
-        .adb-green-badge {
-            display: inline-flex; align-items: center; gap: 0.25rem; background-color: var(--green-light);
-            color: var(--green-dark); padding: 0.25rem 0.5rem; border-radius: var(--radius);
-            font-size: 0.75rem; font-weight: 500;
-        }
-        .adb-green-badge::before { content: '🌿'; font-size: 0.875em; }
-        .navbar {
-            background: var(--white); border-bottom: 1px solid var(--gray-200);
-            padding: var(--spacing-4) 0; position: sticky; top: 0; z-index: 100;
-        }
-        .nav-container {
-            max-width: 1200px; margin: 0 auto; padding: 0 var(--spacing-6);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .nav-brand { display: flex; align-items: center; gap: var(--spacing-3); }
-        .nav-logo { font-size: 2rem; }
-        .brand-text { font-size: 1.25rem; font-weight: 700; color: var(--gray-900); }
-        .nav-menu { display: flex; gap: var(--spacing-6); }
-        .nav-link {
-            display: flex; align-items: center; gap: var(--spacing-2); text-decoration: none;
-            color: var(--gray-600); font-weight: 500; padding: var(--spacing-2) var(--spacing-3);
-            border-radius: var(--radius); transition: var(--transition);
-        }
-        .nav-link:hover, .nav-link.active { color: var(--primary); background-color: var(--gray-50); }
-        .nav-actions { display: flex; align-items: center; gap: var(--spacing-4); }
-        .main-content { max-width: 1200px; margin: 0 auto; padding: var(--spacing-8) var(--spacing-6); }
-        .page { display: none; }
-        .page.active { display: block; }
-        .page-header { margin-bottom: var(--spacing-8); }
-        .page-title { font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: var(--spacing-2); }
-        .page-subtitle { font-size: 1.125rem; color: var(--gray-600); }
-        .section-title { font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-6); }
-        .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-6); }
-        .agent-card {
-            background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
-            padding: var(--spacing-6); transition: var(--transition);
-        }
-        .agent-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-        .agent-header { display: flex; align-items: center; gap: var(--spacing-4); margin-bottom: var(--spacing-4); }
-        .agent-icon {
-            font-size: 2rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-            background: var(--green-light); border-radius: var(--radius-lg);
-        }
-        .agent-info { flex: 1; }
-        .agent-name { font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.25rem; }
-        .agent-status {
-            display: inline-flex; align-items: center; gap: 0.25rem; background: var(--green); color: var(--white);
-            padding: 0.125rem 0.5rem; border-radius: var(--radius); font-size: 0.75rem; font-weight: 500;
-        }
-        .agent-status.active::before { content: '●'; color: var(--white); }
-        .agent-description { color: var(--gray-600); margin-bottom: var(--spacing-4); line-height: 1.5; }
-        .agent-metrics { display: flex; gap: var(--spacing-4); }
-        .metric { text-align: center; }
-        .metric-value { display: block; font-size: 1.25rem; font-weight: 700; color: var(--primary); }
-        .metric-label { font-size: 0.75rem; color: var(--gray-600); }
-        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-4); }
-        .action-card {
-            background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius-xl);
-            padding: var(--spacing-6); text-align: center; cursor: pointer; transition: var(--transition);
-            border: none; font-family: inherit;
-        }
-        .action-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-        .action-icon { font-size: 2rem; margin-bottom: var(--spacing-3); }
-        .action-title { font-size: 1rem; font-weight: 600; color: var(--gray-900); margin-bottom: var(--spacing-2); }
-        .action-description { font-size: 0.875rem; color: var(--gray-600); }
-        .coming-soon { text-align: center; padding: var(--spacing-8); color: var(--gray-600); }
-        .coming-soon-icon { font-size: 3rem; margin-bottom: var(--spacing-4); }
-        .coming-soon h3 { font-size: 1.5rem; margin-bottom: var(--spacing-2); color: var(--gray-700); }
-        @media (max-width: 768px) {
-            .nav-menu { display: none; }
-            .nav-container { padding: 0 var(--spacing-4); }
-            .main-content { padding: var(--spacing-6) var(--spacing-4); }
-            .page-title { font-size: 1.5rem; }
-            .agents-grid { grid-template-columns: 1fr; }
-            .actions-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 480px) {
-            .actions-grid { grid-template-columns: 1fr; }
-            .agent-header { flex-direction: column; text-align: center; }
-            .agent-metrics { justify-content: center; }
-        }
-    </style>
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    
+    <!-- Preload critical resources for performance -->
+    <link rel="preload" href="https://adb-io.github.io/adb-io-shared-components/css/main.css" as="style">
+    <link rel="preload" href="css/base/variables.css" as="style">
+    <link rel="preload" href="css/components/dashboard.css" as="style">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://adb-io.github.io/adb-io-shared-components/css/main.css">
+    <link rel="stylesheet" href="css/base/variables.css">
+    <link rel="stylesheet" href="css/base/reset.css">
+    <link rel="stylesheet" href="css/components/navigation.css">
+    <link rel="stylesheet" href="css/components/dashboard.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="stylesheet" href="css/pages/student-portal.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Meta tags for SEO and social sharing -->
+    <meta name="description" content="ADB-IO Student Portal - Green Learning Management System for sustainable education">
+    <meta name="keywords" content="LMS, education, green computing, student portal, AI learning">
+    <meta name="author" content="ADB-IO">
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Student Portal - ADB-IO Green LMS">
+    <meta property="og:description" content="Sustainable learning platform with AI-powered features">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://adb-io.github.io/adb-io-student-portal/">
+    
+    <!-- Performance optimization -->
+    <meta name="theme-color" content="#059669">
+    <meta name="color-scheme" content="light dark">
 </head>
-<body>
-    <div class="loading-screen" id="loading-screen">
+<body class="student-portal">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
         <div class="loading-spinner"></div>
-        <div style="font-size: 1.125rem; font-weight: 500; margin-bottom: 0.5rem;">Initializing AI Agents</div>
-        <div style="font-size: 0.875rem; opacity: 0.8;">Preparing your personalized learning experience...</div>
+        <p>Loading your dashboard...</p>
     </div>
 
-    <div class="app" id="app" style="display: none;">
-        <header class="navbar">
-            <div class="nav-container">
-                <div class="nav-brand">
-                    <div class="nav-logo">��</div>
-                    <span class="brand-text">ADB-IO Student</span>
-                    <span class="adb-green-badge">AI Powered</span>
+    <!-- Top Header -->
+    <header class="header">
+        <div class="header__container">
+            <div class="header__left">
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="header__mobile-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <!-- Page title -->
+                <div class="header__page-title">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-subtitle">Welcome back to your learning journey</p>
                 </div>
-                
-                <nav class="nav-menu">
-                    <a href="#dashboard" class="nav-link active" data-page="dashboard">
-                        <span>🏠</span> Dashboard
-                    </a>
-                    <a href="#courses" class="nav-link" data-page="courses">
-                        <span>📚</span> Courses
-                    </a>
-                    <a href="#assignments" class="nav-link" data-page="assignments">
-                        <span>📝</span> Assignments
-                    </a>
-                    <a href="#analytics" class="nav-link" data-page="analytics">
-                        <span>📊</span> Analytics
-                    </a>
-                    <a href="#ai-agents" class="nav-link" data-page="ai-agents">
-                        <span>🤖</span> AI Agents
-                    </a>
-                </nav>
-                
-                <div class="nav-actions">
-                    <button class="adb-btn adb-btn--secondary adb-btn--small" id="green-metrics-btn">
-                        <span>🌱</span> Green Mode
+            </div>
+
+            <div class="header__right">
+                <!-- Search -->
+                <div class="header__search">
+                    <input type="text" placeholder="Search courses, assignments..." class="header__search-input">
+                    <svg class="header__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </div>
+
+                <!-- Notifications -->
+                <button class="header__notification" aria-label="Notifications">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="header__notification-badge">3</span>
+                </button>
+
+                <!-- User menu -->
+                <div class="header__user">
+                    <img id="user-avatar" src="assets/images/default-avatar.png" alt="User Avatar" class="header__avatar">
+                    <div class="header__user-info">
+                        <span id="user-name" class="header__username">Loading...</span>
+                        <span class="header__user-role">Student</span>
+                    </div>
+                    <button id="logout-btn" class="header__logout" aria-label="Logout">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16,17 21,12 16,7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
                     </button>
                 </div>
             </div>
-        </header>
+        </div>
+    </header>
 
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar__header">
+                <a href="#" class="sidebar__logo">
+                    <div class="sidebar__logo-icon">A</div>
+                    <div>
+                        <div class="sidebar__logo-text">ADB-IO</div>
+                        <div class="sidebar__logo-subtitle">Green LMS</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- User Profile Section -->
+            <div class="sidebar__user">
+                <div class="sidebar__user-info">
+                    <img id="sidebar-user-avatar" src="assets/images/default-avatar.png" alt="User Avatar" class="sidebar__user-avatar">
+                    <div class="sidebar__user-details">
+                        <h4 id="sidebar-user-name">Loading...</h4>
+                        <p id="sidebar-user-role">Student</p>
+                    </div>
+                </div>
+                <div class="sidebar__user-progress">
+                    <div class="sidebar__user-progress-label">
+                        <span class="sidebar__user-progress-text">Overall Progress</span>
+                        <span id="sidebar-user-progress-percentage" class="sidebar__user-progress-percentage">75%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="sidebar-user-progress-bar" class="progress-fill" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar__nav">
+                <!-- Main Navigation -->
+                <div class="nav-section">
+                    <div class="nav-section__title">Main</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active" data-target="dashboard">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="3" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="3" width="7" height="7"></rect>
+                                    <rect x="14" y="14" width="7" height="7"></rect>
+                                    <rect x="3" y="14" width="7" height="7"></rect>
+                                </svg>
+                                <span class="nav-text">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="courses">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                </svg>
+                                <span class="nav-text">My Courses</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="assignments">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14,2 14,8 20,8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10,9 9,9 8,9"></polyline>
+                                </svg>
+                                <span class="nav-text">Assignments</span>
+                                <span class="nav-link__badge">3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Learning Section -->
+                <div class="nav-section">
+                    <div class="nav-section__title">Learning</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="progress">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12,6 12,12 16,14"></polyline>
+                                </svg>
+                                <span class="nav-text">Progress</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="ai-assistant">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <circle cx="12" cy="17" r="1"></circle>
+                                </svg>
+                                <span class="nav-text">AI Assistant</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="library">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+                                <span class="nav-text">Library</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Account Section -->
+                <div class="nav-section">
+                    <div class="nav-section__title">Account</div>
+                    <ul class="nav-menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="profile">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="nav-text">Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-target="settings">
+                                <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                                <span class="nav-text">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Green Computing Metrics -->
+                <div class="sidebar__footer">
+                    <div class="green-metrics">
+                        <h4 class="green-metrics__title">
+                            🌿 Green Impact
+                        </h4>
+                        <div class="green-metrics__stats">
+                            <div class="metric">
+                                <span class="metric__value">75%</span>
+                                <span class="metric__label">Energy Saved</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric__value">2.3kg</span>
+                                <span class="metric__label">CO₂ Reduced</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
         <main class="main-content">
-            <div class="page active" id="dashboard-page">
-                <div class="page-header">
-                    <h1 class="page-title">Welcome back, Student! 👋</h1>
-                    <p class="page-subtitle">Your AI-powered learning dashboard is ready</p>
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">Dashboard</h1>
+                    <p class="section-subtitle">Welcome back! Here's your learning overview.</p>
                 </div>
 
-                <section style="margin-bottom: 2rem;">
-                    <h2 class="section-title">AI Agents Status</h2>
-                    <div class="agents-grid">
-                        <div class="agent-card">
-                            <div class="agent-header">
-                                <div class="agent-icon">🤖</div>
-                                <div class="agent-info">
-                                    <h3 class="agent-name">Content Curator</h3>
-                                    <span class="agent-status active">Active</span>
-                                </div>
-                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                            </div>
-                            <p class="agent-description">Analyzing your learning patterns and recommending personalized content</p>
-                            <div class="agent-metrics">
-                                <div class="metric">
-                                    <span class="metric-value">12</span>
-                                    <span class="metric-label">Recommendations</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-value">85%</span>
-                                    <span class="metric-label">Accuracy</span>
-                                </div>
-                            </div>
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
                         </div>
-
-                        <div class="agent-card">
-                            <div class="agent-header">
-                                <div class="agent-icon">📝</div>
-                                <div class="agent-info">
-                                    <h3 class="agent-name">Assessment Generator</h3>
-                                    <span class="agent-status active">Active</span>
-                                </div>
-                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                            </div>
-                            <p class="agent-description">Creating adaptive assessments based on your current knowledge level</p>
-                            <div class="agent-metrics">
-                                <div class="metric">
-                                    <span class="metric-value">8</span>
-                                    <span class="metric-label">Pending Quizzes</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-value">92%</span>
-                                    <span class="metric-label">Avg Score</span>
-                                </div>
-                            </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Enrolled Courses</h3>
+                            <p id="courses-count" class="stat-card__value">5</p>
                         </div>
+                    </div>
 
-                        <div class="agent-card">
-                            <div class="agent-header">
-                                <div class="agent-icon">📊</div>
-                                <div class="agent-info">
-                                    <h3 class="agent-name">Learning Analytics</h3>
-                                    <span class="agent-status active">Active</span>
-                                </div>
-                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                            </div>
-                            <p class="agent-description">Tracking your progress and identifying areas for improvement</p>
-                            <div class="agent-metrics">
-                                <div class="metric">
-                                    <span class="metric-value">78%</span>
-                                    <span class="metric-label">Progress</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-value">4.2h</span>
-                                    <span class="metric-label">Study Time</span>
-                                </div>
-                            </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14,2 14,8 20,8"></polyline>
+                            </svg>
                         </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Pending Assignments</h3>
+                            <p id="assignments-count" class="stat-card__value">3</p>
+                        </div>
+                    </div>
 
-                        <div class="agent-card">
-                            <div class="agent-header">
-                                <div class="agent-icon">🌿</div>
-                                <div class="agent-info">
-                                    <h3 class="agent-name">Green Computing</h3>
-                                    <span class="agent-status active">Active</span>
+                    <div class="stat-card">
+                        <div class="stat-card__icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12,6 12,12 16,14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-card__content">
+                            <h3 class="stat-card__title">Overall Progress</h3>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div id="progress-bar" class="progress-fill" style="width: 75%"></div>
                                 </div>
-                                <button class="adb-btn adb-btn--small adb-btn--primary">View</button>
-                            </div>
-                            <p class="agent-description">Optimizing your learning experience for minimal environmental impact</p>
-                            <div class="agent-metrics">
-                                <div class="metric">
-                                    <span class="metric-value">0.2kg</span>
-                                    <span class="metric-label">CO₂ Today</span>
-                                </div>
-                                <div class="metric">
-                                    <span class="metric-value">75%</span>
-                                    <span class="metric-label">Energy Saved</span>
-                                </div>
+                                <span id="progress-text" class="progress-text">75%</span>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <section>
-                    <h2 class="section-title">Quick Actions</h2>
-                    <div class="actions-grid">
-                        <button class="action-card" data-action="continue-learning">
-                            <div class="action-icon">📖</div>
-                            <h3 class="action-title">Continue Learning</h3>
-                            <p class="action-description">Resume your last course</p>
-                        </button>
-                        <button class="action-card" data-action="take-quiz">
-                            <div class="action-icon">🧠</div>
-                            <h3 class="action-title">Take Quiz</h3>
-                            <p class="action-description">Test your knowledge</p>
-                        </button>
-                        <button class="action-card" data-action="view-recommendations">
-                            <div class="action-icon">💡</div>
-                            <h3 class="action-title">AI Recommendations</h3>
-                            <p class="action-description">Personalized content</p>
-                        </button>
-                        <button class="action-card" data-action="check-progress">
-                            <div class="action-icon">📈</div>
-                            <h3 class="action-title">Check Progress</h3>
-                            <p class="action-description">View your analytics</p>
-                        </button>
+                <!-- AI Recommendations -->
+                <div class="dashboard-section">
+                    <h2 class="dashboard-section__title">🤖 AI Recommendations</h2>
+                    <div id="ai-recommendations" class="recommendations-grid">
+                        <div class="recommendation-card">
+                            <h3>Complete Chapter 3 exercises</h3>
+                            <p>Based on your progress, completing these exercises will help solidify your understanding.</p>
+                            <button class="btn btn--primary btn--sm">Start Now</button>
+                        </div>
+                        <div class="recommendation-card">
+                            <h3>Review JavaScript fundamentals</h3>
+                            <p>Your recent quiz results suggest reviewing these concepts would be beneficial.</p>
+                            <button class="btn btn--secondary btn--sm">Review</button>
+                        </div>
                     </div>
-                </section>
-            </div>
+                </div>
 
-            <div class="page" id="courses-page">
-                <div class="page-header">
-                    <h1 class="page-title">My Courses</h1>
-                    <p class="page-subtitle">AI-curated learning paths</p>
+                <!-- Recent Activity -->
+                <div class="dashboard-section">
+                    <h2 class="dashboard-section__title">Recent Activity</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">📚</div>
+                            <div class="activity-content">
+                                <h4>Completed: Introduction to Algorithms</h4>
+                                <p>2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">✅</div>
+                            <div class="activity-content">
+                                <h4>Submitted: Data Structures Assignment</h4>
+                                <p>1 day ago</p>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">🎯</div>
+                            <div class="activity-content">
+                                <h4>Achieved: 90% in JavaScript Quiz</h4>
+                                <p>3 days ago</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="coming-soon">
-                    <div class="coming-soon-icon">🚧</div>
-                    <h3>Coming Soon</h3>
-                    <p>Course catalog with AI recommendations</p>
-                </div>
-            </div>
+            </section>
 
-            <div class="page" id="assignments-page">
-                <div class="page-header">
-                    <h1 class="page-title">Assignments</h1>
-                    <p class="page-subtitle">AI-generated assessments</p>
+            <!-- Other sections will be added here -->
+            <section id="courses" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">My Courses</h1>
+                    <p class="section-subtitle">Manage your enrolled courses and track progress.</p>
                 </div>
-                <div class="coming-soon">
-                    <div class="coming-soon-icon">🚧</div>
-                    <h3>Coming Soon</h3>
-                    <p>Adaptive assignments and quizzes</p>
+                <div class="placeholder-content">
+                    <p>Courses content will be implemented here...</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="page" id="analytics-page">
-                <div class="page-header">
-                    <h1 class="page-title">Learning Analytics</h1>
-                    <p class="page-subtitle">AI-powered insights</p>
+            <section id="assignments" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Assignments</h1>
+                    <p class="section-subtitle">View and submit your assignments.</p>
                 </div>
-                <div class="coming-soon">
-                    <div class="coming-soon-icon">🚧</div>
-                    <h3>Coming Soon</h3>
-                    <p>Detailed learning analytics and predictions</p>
+                <div class="placeholder-content">
+                    <p>Assignments content will be implemented here...</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="page" id="ai-agents-page">
-                <div class="page-header">
-                    <h1 class="page-title">AI Agents</h1>
-                    <p class="page-subtitle">Your learning assistants</p>
+            <section id="progress" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Progress Tracking</h1>
+                    <p class="section-subtitle">Monitor your learning journey and achievements.</p>
                 </div>
-                <div class="coming-soon">
-                    <div class="coming-soon-icon">🚧</div>
-                    <h3>Coming Soon</h3>
-                    <p>Detailed AI agent management and settings</p>
+                <div class="placeholder-content">
+                    <p>Progress tracking content will be implemented here...</p>
                 </div>
-            </div>
+            </section>
+
+            <section id="ai-assistant" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">AI Assistant</h1>
+                    <p class="section-subtitle">Get personalized learning recommendations and support.</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>AI Assistant content will be implemented here...</p>
+                </div>
+            </section>
+
+            <section id="library" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Library</h1>
+                    <p class="section-subtitle">Access learning resources and materials.</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>Library content will be implemented here...</p>
+                </div>
+            </section>
+
+            <section id="profile" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Profile</h1>
+                    <p class="section-subtitle">Manage your account settings and preferences.</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>Profile content will be implemented here...</p>
+                </div>
+            </section>
+
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">Settings</h1>
+                    <p class="section-subtitle">Customize your learning experience.</p>
+                </div>
+                <div class="placeholder-content">
+                    <p>Settings content will be implemented here...</p>
+                </div>
+            </section>
         </main>
     </div>
 
+    <!-- Scripts -->
+    <script type="module" src="script.js"></script>
+    
+    <!-- Service Worker for offline support -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('app').style.display = 'block';
-            }, 2000);
-
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pages = document.querySelectorAll('.page');
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    pages.forEach(p => p.classList.remove('active'));
-                    link.classList.add('active');
-                    const pageId = link.getAttribute('data-page') + '-page';
-                    const targetPage = document.getElementById(pageId);
-                    if (targetPage) targetPage.classList.add('active');
-                });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(error => console.log('SW registration failed'));
             });
-
-            document.querySelectorAll('.action-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const action = card.getAttribute('data-action');
-                    alert(`🚀 ${action.replace('-', ' ')} feature coming soon!\n\nThis will integrate with our AI agents to provide personalized learning experiences.`);
-                });
-            });
-
-            document.getElementById('green-metrics-btn').addEventListener('click', () => {
-                alert('🌿 Green Computing Metrics:\n\n• Energy Usage: 75% less than traditional LMS\n• Carbon Footprint: 0.2kg CO₂ today\n• Renewable Energy: 100% powered\n• Battery Optimization: Active\n\nYou\'re making a positive environmental impact!');
-            });
-        });
+        }
     </script>
 </body>
 </html>
