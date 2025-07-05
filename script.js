@@ -11,6 +11,7 @@ import CourseMaterials from './js/modules/course-materials.js';
 import Progress from './js/modules/progress.js';
 import CourseProgress from './js/modules/course-progress.js';
 import AIAssistant from './js/modules/ai-assistant.js';
+import Assignments from './js/modules/assignments.js';
 
 // Import local components (no longer shared)
 import { Modal, showAlert } from './js/components/modal.js';
@@ -66,6 +67,7 @@ class StudentPortalApp {
             // Initialize all modules with mock data (no API client needed)
             this.modules.dashboard = new Dashboard(this.currentUser);
             this.modules.courses = new Courses(this.currentUser);
+            this.modules.assignments = new Assignments(this.currentUser);
             this.modules.progress = new Progress(this.currentUser);
             this.modules.courseMaterials = new CourseMaterials(this.currentUser);
             this.modules.courseProgress = new CourseProgress(this.currentUser);
@@ -74,7 +76,8 @@ class StudentPortalApp {
             // Initialize each module
             await Promise.all([
                 this.modules.dashboard.init(),
-                                this.modules.courses.init(),
+                this.modules.courses.init(),
+                this.modules.assignments.init(),
                 this.modules.progress.init(),
                 this.modules.aiAssistant.init()
             ]);
