@@ -5,7 +5,7 @@
 
 // Import modules (simplified - no auth for now)
 import Dashboard from './js/modules/dashboard.js';
-import Courses from './js/modules/courses.js';
+import CourseDetail from './js/modules/course-detail.js';import Courses from './js/modules/courses.js';
 import Progress from './js/modules/progress.js';
 import AIAssistant from './js/modules/ai-assistant.js';
 
@@ -64,7 +64,7 @@ class StudentPortalApp {
             this.modules.dashboard = new Dashboard(this.currentUser);
             this.modules.courses = new Courses(this.currentUser);
             this.modules.progress = new Progress(this.currentUser);
-            this.modules.aiAssistant = new AIAssistant(this.currentUser);
+            this.modules.courseDetail = new CourseDetail(this.currentUser);            this.modules.aiAssistant = new AIAssistant(this.currentUser);
 
             // Initialize each module
             await Promise.all([
