@@ -369,8 +369,10 @@ export default class Courses {
         const course = this.courses.find(c => c.id === courseId);
         if (course) {
             console.log(`Viewing details for course: ${course.title}`);
-            // TODO: Navigate to course details page
-            alert(`Course details for "${course.title}" will be implemented next.`);
+            // Navigate to course details page
+            if (window.studentPortalApp) {
+                window.studentPortalApp.navigateToSection('course-detail', { courseId });
+            }
         }
     }
 

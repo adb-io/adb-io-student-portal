@@ -149,9 +149,15 @@ class StudentPortalApp {
         }
     }
 
-    navigateToSection(section) {
+    navigateToSection(section, params = {}) {
         // Store current section
         this.currentSection = section;
+
+        // Handle special sections with parameters
+        if (section === 'course-detail' && params.courseId) {
+            this.showCourseDetail(params.courseId);
+            return;
+        }
 
         // Hide all sections
         const sections = document.querySelectorAll('.content-section');
@@ -186,6 +192,38 @@ class StudentPortalApp {
 
         // Track page view for analytics
         this.trackPageView(section);
+    }
+
+    async showCourseDetail(courseId) {
+        try {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => s.classList.remove('active'));
+
+            // Create or get course detail section
+            let courseDetailSection = document.getElementById('course-detail');
+            if (!courseDetailSection) {
+                courseDetailSection = document.createElement('div');
+                courseDetailSection.id = 'course-detail';
+                courseDetailSection.className = 'content-section';
+                document.querySelector('.main-content').appendChild(courseDetailSection);
+            }
+
+            // Show course detail section
+            courseDetailSection.classList.add('active');
+
+            // Initialize course detail module
+            const CourseDetail = (await import('./js/modules/course-detail.js')).default;
+            const courseDetail = new CourseDetail(this.currentUser);
+            await courseDetail.init(courseId);
+
+            // Update page title
+            this.updatePageTitle('course-detail');
+
+        } catch (error) {
+            console.error('Failed to show course detail:', error);
+            this.showError('Failed to load course details');
+        }
     }
 
     updatePageTitle(section) {
