@@ -3,14 +3,13 @@
  * Green Computing: Efficient course management with minimal resource usage
  */
 
-export class Courses {
-    constructor(apiClient) {
-        this.apiClient = apiClient;
+export default class Courses {
+    constructor(user) {
+        this.user = user;
         this.courses = [];
         this.filteredCourses = [];
         this.currentFilter = 'all';
         this.searchQuery = '';
-        this.init();
     }
 
     async init() {

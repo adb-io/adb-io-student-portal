@@ -3,9 +3,9 @@
  * Green Computing: Efficient AI integration with minimal resource usage
  */
 
-export class AIAssistant {
-    constructor(apiClient) {
-        this.apiClient = apiClient;
+export default class AIAssistant {
+    constructor(user) {
+        this.user = user;
         this.chatHistory = [];
         this.isTyping = false;
         this.recommendations = [];

@@ -3,9 +3,9 @@
  * Green Computing: Efficient progress monitoring with minimal resource usage
  */
 
-export class Progress {
-    constructor(apiClient) {
-        this.apiClient = apiClient;
+export default class Progress {
+    constructor(user) {
+        this.user = user;
         this.progressData = {};
         this.achievements = [];
         this.learningPath = [];

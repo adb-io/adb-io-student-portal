@@ -3,10 +3,7 @@
  * Green Computing: Optimized for performance and minimal resource usage
  */
 
-// Import utilities and modules
-import apiClient from './js/utils/api-client.js';
-import authManager from './js/utils/auth.js';
-import storageManager from './js/utils/storage.js';
+// Import modules (simplified - no auth for now)
 import Dashboard from './js/modules/dashboard.js';
 import Courses from './js/modules/courses.js';
 import Progress from './js/modules/progress.js';
@@ -17,10 +14,7 @@ import { Modal, showAlert } from 'https://adb-io.github.io/adb-io-shared-compone
 
 class StudentPortalApp {
     constructor() {
-        this.apiClient = apiClient;
-        this.authManager = authManager;
-        this.storageManager = storageManager;
-        this.currentUser = null;
+        this.currentUser = this.getMockUser(); // Mock user for development
         this.modules = {};
         this.currentSection = 'dashboard';
         this.init();
@@ -31,24 +25,15 @@ class StudentPortalApp {
             // Show loading screen
             this.showLoadingScreen();
 
-            // Check authentication first
-            if (!this.checkAuthentication()) {
-                this.redirectToLogin();
-                return;
-            }
-
-            // Initialize modules
-            await this.loadUserData();
+            // Initialize modules with mock data
             await this.initializeModules();
             this.setupNavigation();
             this.setupEventListeners();
+            this.updateUserInterface();
             this.trackGreenMetrics();
 
             // Hide loading screen
             this.hideLoadingScreen();
-
-            // Setup auto-logout
-            this.setupAutoLogout();
 
         } catch (error) {
             console.error('Failed to initialize application:', error);
@@ -57,37 +42,37 @@ class StudentPortalApp {
         }
     }
 
-    checkAuthentication() {
-        return this.authManager.isAuthenticated();
-    }
-
-    redirectToLogin() {
-        window.location.href = 'https://adb-io.github.io/adb-io-auth/';
-    }
-
-    async loadUserData() {
-        try {
-            this.currentUser = this.authManager.getCurrentUser();
-
-            if (!this.currentUser) {
-                // Try to load from API
-                this.currentUser = await this.authManager.loadCurrentUser();
-            }
-
-            this.updateUserInterface();
-        } catch (error) {
-            console.error('Failed to load user data:', error);
-            this.showError('Failed to load user data. Please try again.');
-        }
+    getMockUser() {
+        // Mock user data for development (no authentication needed)
+        return {
+            id: 'student_001',
+            name: 'John Doe',
+            email: 'john.doe@student.adb.io',
+            role: 'student',
+            avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=059669&color=fff',
+            enrolledCourses: 5,
+            completedCourses: 2,
+            overallProgress: 75,
+            studyStreak: 12,
+            carbonSaved: 2.3
+        };
     }
 
     async initializeModules() {
         try {
-            // Initialize all modules
-            this.modules.dashboard = new Dashboard(this.apiClient);
-            this.modules.courses = new Courses(this.apiClient);
-            this.modules.progress = new Progress(this.apiClient);
-            this.modules.aiAssistant = new AIAssistant(this.apiClient);
+            // Initialize all modules with mock data (no API client needed)
+            this.modules.dashboard = new Dashboard(this.currentUser);
+            this.modules.courses = new Courses(this.currentUser);
+            this.modules.progress = new Progress(this.currentUser);
+            this.modules.aiAssistant = new AIAssistant(this.currentUser);
+
+            // Initialize each module
+            await Promise.all([
+                this.modules.dashboard.init(),
+                this.modules.courses.init(),
+                this.modules.progress.init(),
+                this.modules.aiAssistant.init()
+            ]);
 
             console.log('All modules initialized successfully');
         } catch (error) {
@@ -223,24 +208,6 @@ class StudentPortalApp {
     }
 
     setupEventListeners() {
-        // Logout functionality
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                this.logout();
-            });
-        }
-
-        // Auth state changes
-        this.authManager.onAuthStateChange((event, user) => {
-            if (event === 'logout') {
-                this.redirectToLogin();
-            } else if (event === 'login') {
-                this.currentUser = user;
-                this.updateUserInterface();
-            }
-        });
-
         // Window events
         window.addEventListener('beforeunload', () => {
             this.cleanup();
@@ -292,13 +259,7 @@ class StudentPortalApp {
         }
     }
 
-    async logout() {
-        try {
-            await this.authManager.logout();
-        } catch (error) {
-            console.error('Logout error:', error);
-        }
-    }
+
 
     trackGreenMetrics() {
         // Track performance metrics for green computing
@@ -373,50 +334,16 @@ class StudentPortalApp {
         }
     }
 
-    // Auto-logout setup
-    setupAutoLogout() {
-        // Setup auto-logout after 30 minutes of inactivity
-        this.autoLogoutCleanup = this.authManager.setupAutoLogout(30);
-    }
 
-    // Offline data sync
+
+    // Simplified sync (no offline data for now)
     async syncOfflineData() {
-        try {
-            const offlineData = this.storageManager.getOfflineData('pending_sync', []);
-
-            if (offlineData.length > 0) {
-                console.log(`Syncing ${offlineData.length} offline items...`);
-
-                for (const item of offlineData) {
-                    try {
-                        await this.apiClient.request(item.endpoint, item.options);
-                    } catch (error) {
-                        console.error('Failed to sync item:', error);
-                    }
-                }
-
-                // Clear synced data
-                this.storageManager.setOfflineData('pending_sync', []);
-                this.showSuccess('Offline data synced successfully');
-            }
-        } catch (error) {
-            console.error('Sync failed:', error);
-        }
+        console.log('Sync functionality disabled in simplified mode');
     }
 
-    // Restore user preferences
+    // Simplified preferences (no storage for now)
     restoreUserPreferences() {
-        // Restore last visited section
-        const lastSection = this.storageManager.getPreference('currentSection', 'dashboard');
-        if (lastSection && lastSection !== 'dashboard') {
-            setTimeout(() => {
-                this.navigateToSection(lastSection);
-            }, 100);
-        }
-
-        // Restore other preferences
-        const preferences = this.storageManager.getAllPreferences();
-        console.log('Restored user preferences:', preferences);
+        console.log('User preferences disabled in simplified mode');
     }
 
     // Error handling
@@ -439,13 +366,7 @@ class StudentPortalApp {
             }
         });
 
-        // Clean up auto-logout
-        if (this.autoLogoutCleanup) {
-            this.autoLogoutCleanup();
-        }
-
-        // Save current state
-        this.storageManager.setPreference('lastVisit', Date.now());
+        console.log('Application cleanup completed');
     }
 
     // Development helpers

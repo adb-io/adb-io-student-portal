@@ -3,9 +3,9 @@
  * Green Computing: Efficient dashboard management with minimal resource usage
  */
 
-export class Dashboard {
-    constructor(apiClient) {
-        this.apiClient = apiClient;
+export default class Dashboard {
+    constructor(user) {
+        this.user = user;
         this.data = {
             stats: {},
             recentActivity: [],
