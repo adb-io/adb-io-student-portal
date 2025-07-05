@@ -348,8 +348,13 @@ export default class Courses {
         const course = this.courses.find(c => c.id === courseId);
         if (course) {
             console.log(`Continuing course: ${course.title}`);
-            // TODO: Navigate to course content
-            alert(`Continuing "${course.title}". Course content will be implemented next.`);
+            // Navigate to course materials
+            if (window.studentPortalApp) {
+                window.studentPortalApp.navigateToSection('course-materials', {
+                    courseId: courseId,
+                    moduleId: 'module_001' // Default to first module
+                });
+            }
         }
     }
 

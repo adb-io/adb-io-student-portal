@@ -159,6 +159,11 @@ class StudentPortalApp {
             return;
         }
 
+        if (section === 'course-materials' && params.courseId) {
+            this.showCourseMaterials(params.courseId, params.moduleId);
+            return;
+        }
+
         // Hide all sections
         const sections = document.querySelectorAll('.content-section');
         sections.forEach(s => s.classList.remove('active'));
@@ -223,6 +228,38 @@ class StudentPortalApp {
         } catch (error) {
             console.error('Failed to show course detail:', error);
             this.showError('Failed to load course details');
+        }
+    }
+
+    async showCourseMaterials(courseId, moduleId) {
+        try {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => s.classList.remove('active'));
+
+            // Create or get course materials section
+            let courseMaterialsSection = document.getElementById('course-materials');
+            if (!courseMaterialsSection) {
+                courseMaterialsSection = document.createElement('div');
+                courseMaterialsSection.id = 'course-materials';
+                courseMaterialsSection.className = 'content-section';
+                document.querySelector('.main-content').appendChild(courseMaterialsSection);
+            }
+
+            // Show course materials section
+            courseMaterialsSection.classList.add('active');
+
+            // Initialize course materials module
+            const CourseMaterials = (await import('./js/modules/course-materials.js')).default;
+            const courseMaterials = new CourseMaterials(this.currentUser);
+            await courseMaterials.init(courseId, moduleId);
+
+            // Update page title
+            this.updatePageTitle('course-materials');
+
+        } catch (error) {
+            console.error('Failed to show course materials:', error);
+            this.showError('Failed to load course materials');
         }
     }
 
