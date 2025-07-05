@@ -67,11 +67,17 @@ class StudentPortalApp {
             this.modules.dashboard = new Dashboard(this.currentUser);
             this.modules.courses = new Courses(this.currentUser);
             this.modules.progress = new Progress(this.currentUser);
-            this.modules.courseDetail = new CourseDetail(this.currentUser);            this.modules.aiAssistant = new AIAssistant(this.currentUser);
+            this.modules.courseDetail = new CourseDetail(this.currentUser);
+            this.modules.aiAssistant = new AIAssistant(this.currentUser);
 
-            this.modules.courseMaterials = new CourseMaterials(this.currentUser);            // Initialize each module
+            this.modules.courseMaterials = new CourseMaterials(this.currentUser);
+            this.modules.courseProgress = new CourseProgress(this.currentUser);
+
+            // Initialize each module
             await Promise.all([
-            this.modules.courseProgress = new CourseProgress(this.currentUser);                this.modules.dashboard.init(),
+                        // Initialize each module
+            await Promise.all([
+                this.modules.dashboard.init(),
                 this.modules.courses.init(),
                 this.modules.progress.init(),
                 this.modules.aiAssistant.init()
